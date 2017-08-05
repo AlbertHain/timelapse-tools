@@ -1,5 +1,6 @@
 # timelapse-tools
 bash-scripts for handling video- and imagefiles for timelapsing - GoPro-Users will deserve it
+
 running on debian linux with ffmpeg, exiv and mediainfo (thanks a lot)
 
 video2img generates jpg-files with exif-stamps (DateTimeOriginal) according to video run time
