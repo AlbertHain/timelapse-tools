@@ -90,39 +90,28 @@ if [ $# -gt 0 ]; then
     intervall=$uses
     while [ $# -gt 0 ]; do
 		if [ $intervall -eq $uses ]; then                  # we got the n-th image
-	        sourcename=${1##*/};                              # we are already in the working directory
-# 	        echo $sourcename
-	        counterstring="$(printf "%05d" $counter)";
-# 			destinationname=$prefix$destinationname"."$destinationtype           # der Name wird gebaut: counter Ergänzung.Dateityp
-# 			processedname=$processdir"/"$destinationname
+			sourcename=${1##*/};                              # we are already in the working directory
+	    	counterstring="$(printf "%05d" $counter)";
 			processedname=$processdir"/"$prefix$counterstring"."$destinationtype
-#             echo -ne $sourcename" -> "$processedname"\r"
-            echo $sourcename" -> "$processedname
-            cp "$sourcename" "$processedname"
+       		echo -ne $sourcename" -> "$processedname"\r"
+         	cp "$sourcename" "$processedname"
 
-############ datetime ################
+############ fetch datetime ################
             datetime=$(exiftool -b -DateTimeOriginal "$sourcename" 2> /dev/null);        # usually 2005:04:11 19:06:52.
-            																			# no error messages
             year=$(echo     "$datetime" | cut -c 1-4)              # 4-digits to check for correct year
             month=$(echo    "$datetime" | cut -c 6-7)
             day=$(echo      "$datetime" | cut -c 9-10)
             hour=$(echo   "$datetime" | cut -c 12-13)
             minute=$(echo   "$datetime" | cut -c 15-16)
             second=$(echo  "$datetime" | cut -c 18-19)
-
-############ date labeling ################
+############ create date label ################
             datdial=$day"."$month"."${year#20}" "$hour":"$minute
  			text=$day"."$month"."${year#20}
 
  			stext="mogrify -font $font -pointsize $fontsize "
-# 			stext+= " -fill $fontshadow -draw 'gravity Southwest text $xoffset1,$yoffset1 $text' \
-#  	             -fill $fontcolor    -draw gravity Southwest text $xoffset2,$yoffset2 '$text'" \
  	        stext+=" -fill $fontcolor -draw \"text $datex,$datey '$text'\""
  	        stext+=" $dial2 "
-#        		echo $stext
-#   	        eval ${stext}
-############ dial labeling ################
-#3.141592
+############ create time-hands ################
 			hourangle=`echo "scale=2; (($hour+($minute/60))*360/12)/1" | bc`;
 			minuteangle=`echo "scale=2; ($minute*6 + $second/10)/1" | bc`;
 
@@ -137,13 +126,9 @@ if [ $# -gt 0 ]; then
 			transparent="convert $dial2 $dialalpha -alpha off -compose CopyOpacity -composite $dial"
  			eval ${transparent}
 
-#			composite $dial2 -gravity southwest "$sourcename" "$processedname"
  			composite -alpha set -geometry +$dialx+$dialy $dial "$sourcename" "$processedname"
 
-
-#convert main.png -alpha on \( +clone -channel a -fx 0 \) +swap mask.png -composite out.png
-
-############ dial ################
+############ dial finished ################
 			counter=$[$counter+1];					               # next used image
 			intervall=0;							               # start over at 0
 		fi
@@ -159,19 +144,19 @@ if [ $# -gt 0 ]; then
 	rm $minute_r
 	rm $dial2
 	rm $dial
-	                                                               # Video machen
+	##### create the video out of the images
 	videoname="../video_"$uses".mp4"
 	if [ -f "$videoname" ]; then          # file exists?
 		echo -e "\E[1;33;40m "$videoname" already in use, attach date-time to filename\E[0m";
 		datetime=$(date +%y-%m-%d_%H%M%S)				# 16-12-23_184533
 		videoname=${videoname%.*}"_"$datetime".mp4";
     fi
-	#ffmpeg -r 30 -i $processdir/rest%05d.jpg -r $destinationframerate -pix_fmt yuv420p -b:v 12M $videoname
 	ffmpeg -v quiet -stats -r 30 -i $processdir/$prefix%05d.jpg -r $destinationframerate -vf format=yuv420p -crf 23 $videoname
-# 	rm $processdir/rest*.jpg
+# you probably cleanup automatically
+# 	rm $processdir/$prefix*.jpg
 # 	rmdir $processdir
 
 else
-echo "generates a timelapsevideo out of images, enblends a dial if exif-dates given (AD 2017-08-05)"
+echo "generates a timelapsevideo out of images, enblends a dial based ont the exif-dates given (AD 2017-08-05)"
 echo "Syntax: timelapse *.jpg"
 fi
