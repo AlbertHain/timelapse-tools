@@ -21,8 +21,10 @@ prefix="clocked"
 fontcolor="'#000000'"
 fontshadow="'#888888'"
 transparency="'#888888'"
-imgheight=1080
-imgwidth=1920
+if [ $# -gt 0 ]; then						# use dimensions of first image for videofile
+	imgwidth=`identify -format "%w" "$1"`
+	imgheight=`identify -format "%h" "$1"`
+fi;
 destinationframerate=30
 font="/usr/share/fonts/truetype/liberation/LiberationMono-Regular.ttf"
 fontsize=`echo "scale=0; $imgheight/50" | bc`
