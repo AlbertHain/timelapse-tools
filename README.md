@@ -6,6 +6,7 @@ running on debian linux with ffmpeg, exiv, melt and mediainfo (thanks a lot)
 * **timelapse.sh** generates a video out of jpeg images and enblends a dial bottom-right with the exif date and time
 * **videoslices.sh** cuts automatically video slices out of a video  
 * **videofade.sh** combines the slices by fading one in another  
+* **videodial4vids.sh** draws a dial over a video  
 
 ## scenario 1
 make timelapse video with speedup > 30 and enblend a dial with real time and date info
@@ -20,3 +21,9 @@ speedup videoimpression of GoPro-video
 1. **videoslices.sh** cuts short scenes every n secondes
 2. manually delete the slices you don't want to show
 3. **videofade.sh** fades the scenes together
+
+## scenario 4
+just want to have a realtime dial enblended in a video
+
+1. **videodial4vids.sh** uses the date/time info of the video and draws a dial at the lower right of the video
+
