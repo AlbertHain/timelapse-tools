@@ -22,7 +22,7 @@ speedup videoimpression of GoPro-video
 2. manually delete the slices you don't want to show
 3. **videofade.sh** fades the scenes together
 
-## scenario 4
+## scenario 3
 just want to have a realtime dial enblended in a video
 
 1. **videodial4vids.sh** uses the date/time info of the video and draws a dial at the lower right of the video
