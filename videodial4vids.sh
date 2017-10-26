@@ -63,7 +63,8 @@ if [ $# -gt 0 ]; then
                 [ $lowersourcetype == "mov" ] ||
                 [ $lowersourcetype == "mts" ] ||
                 [ $lowersourcetype == "avi" ] ||
-                [ $lowersourcetype == "mpg" ]; then
+                [ $lowersourcetype == "mpg" ]
+            then
                 datetime=$(mediainfo --Inform="Video;%Encoded_Date%" "$filename")  # starttime
                 if [ "$datetime" == "UTC 1904-01-01 00:00:00" ] ||
                    [ "$datetime" == "" ]            # there's no Encoded_Date given,
