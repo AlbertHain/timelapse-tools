@@ -70,11 +70,21 @@ if [ $# -gt 0 ]; then
                    [ "$datetime" == "" ]            # there's no Encoded_Date given,
                 then                                # look for filename 2017-08-23 145110, no colons allowed in filenames
                     filedatetime=$(echo $filename | grep -Eo "([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}[0-9]{2}[0-9]{2})")
-                    datetime=$(echo "$filename" | cut -c 1-10)
-                    datetime=$datetime" "$(echo "$filedatetime"|cut -c 12-13);
-                    datetime=$datetime":"$(echo "$filedatetime"|cut -c 14-15);
-                    datetime=$datetime":"$(echo "$filedatetime"|cut -c 16-17);
-                    echo "no Encoded_Date given, using filename-date:$datetime"
+                    if [ "$filedatetime" != "" ]
+                    then
+                        datetime=$(echo "$filename" | cut -c 1-10)
+                        datetime=$datetime" "$(echo "$filedatetime"|cut -c 12-13);
+                        datetime=$datetime":"$(echo "$filedatetime"|cut -c 14-15);
+                        datetime=$datetime":"$(echo "$filedatetime"|cut -c 16-17);
+                        echo "no Encoded_Date given, using filename-date $datetime"
+                    else
+                        datetime=$(exiftool -b -FileModifyDate "$filename")
+                        filedatetime=$(echo $datetime | grep -Eo "([0-9]{4}:[0-9]{2}:[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2})") # filter out 'Timezone-marker, usualy UTC
+                        datetime=$(echo "$filedatetime" | cut -c 1-4)
+                        datetime=$datetime"-"$(echo "$filedatetime"|cut -c 6-7);
+                        datetime=$datetime"-"$(echo "$filedatetime"|cut -c 9-19);
+                        echo "no info in filename, using filesystem date $datetime"
+                    fi
                 fi
                 if [ $ignoretimezone == "yes" ]
                 then
