@@ -3,7 +3,7 @@ bash-scripts for handling video- and imagefiles for timelapsing - GoPro-Users wi
 
 running on debian linux with ffmpeg, exiv, melt and mediainfo (thanks a lot)  
 * **video2img.s** generates jpg-files out of videos with exif-stamps (DateTimeOriginal) according to video run time  
-* **timelapse.sh** generates a video out of jpeg images and enblends a dial bottom-right with the exif date and time
+* **videodial4imgs.sh** generates a video out of jpeg images and enblends a dial bottom-right with the exif date and time
 * **videoslices.sh** cuts automatically video slices out of a video  
 * **videofade.sh** combines the slices by fading one in another  
 * **videodial4vids.sh** draws a dial over a video  
@@ -13,7 +13,7 @@ make timelapse video with speedup > 30 and enblend a dial with real time and dat
 
 1. **video2img.sh** generates every n-th frame an images with exif-timestamp out the real videoinfo
 2. manually delete the jpgs you don't want to show
-3. let **timelapse.sh** generate the timelapsed video out of every n-th imaage with the dial in lower right corner of the video
+3. let **videodial4imgs.sh** generate the timelapsed video out of every n-th imaage with the dial in lower right corner of the video
 
 ## scenario 2
 speedup videoimpression of GoPro-video
