@@ -1,4 +1,4 @@
-# timelapse-tools
+# video and timelapse tools
 bash-scripts for handling video- and imagefiles for timelapsing - GoPro-Users will deserve it
 
 running on debian linux with ffmpeg, exiv, melt and mediainfo (thanks a lot)  
