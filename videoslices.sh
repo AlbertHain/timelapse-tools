@@ -1,12 +1,12 @@
 #!/bin/bash
-# AD 2017-05-17
+# AD 2018-11-07
 # copy slices out of a given video and pastes them together
 #
-slicelength=2       # length of videoslice in seconds
-slicegap=60          # gap between videoslices in seconds
+slicelength=2000       # length of videoslice in milliseconds
+slicegap=30000          # gap between videoslices in milliseconds
 #quicker
- slicelength=1       # length of videoslice in seconds
- slicegap=30          # gap between videoslices in seconds
+# slicelength=/1       # length of videoslice in seconds
+# slicegap=30          # gap between videoslices in seconds
 
 profile="-preset medium"            # ultrafast,superfast, veryfast, faster, fast, medium, slow, slower, veryslow, placebo
 metadata="-map_metadata 0"
@@ -37,6 +37,7 @@ getduration () {
     time=${time%:*}
     hours=${time##*:}
     secondstotal=`echo "(($hours*60 + $minutes)*60 + $seconds )" | bc`
+    millisecondstotal=`echo "1000*(($hours*60 + $minutes)*60 + $seconds )" | bc`
 }
 ############################
 # gets "$inputfile" creation date and time of video and returns string with date and time: creationtime
@@ -53,7 +54,11 @@ getcreation () {
 # makes at string-timestamp out of a number of seconds
 ############################
 makestamp() {
-    printf '%02d:%02d:%02d' $(($1%86400/3600)) $(($1%3600/60)) $(($1%60))
+#    printf '%02d:%02d:%02d' $(($1%86400/3600)) $(($1%3600/60)) $(($1%60))
+   millis=`echo "scale=0; (($1*1000/1.0))" | bc`
+   millis=$1
+#     millis= printf %5d $(echo "$1*1000" | bc -l)
+    printf '%02d:%02d:%02d.%03d' $(($millis%86400000/3600000)) $(($millis%3600000/60000)) $(($millis%60000/1000)) $(($millis%1000))
 }
 
 while [ $# -gt 0 ]      # loop through commandline patterns
@@ -71,10 +76,11 @@ do
     position=0
     slicenumber=0
     slicelengthstamp=`makestamp $slicelength`
+    echo "slicelengthstamp".$slicelengthstamp."\n"
 
     segments=segments.txt                                       # segments=$(mktemp) does not work because of security issues of ffmpeg
 
-    while [ $position -lt $(( $secondstotal-$slicelength )) ]; do
+    while [ $position -lt $(( $millisecondstotal-$slicelength )) ]; do
         slicenummerstring=`printf '%03d' $slicenumber`
         positionstamp=`makestamp $position`
         echo "start:" $positionstamp " length:" $slicelengthstamp " filename:" $filetrunc_nws"_"$slicenummerstring"."$filetype
@@ -92,7 +98,7 @@ do
     ######################
     # cleanup slices - if desired
     ######################
-    while [ $position -lt $secondstotal ]; do
+    while [ $position -lt $millisecondstotal ]; do
         slicenummerstring=`printf '%03d' $slicenumber`
     #     rm $filetrunc_nws"_"$slicenummerstring"."$filetype
         mv $filetrunc_nws"_"$slicenummerstring"."$filetype $slicedir
